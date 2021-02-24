@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
@@ -13,12 +14,17 @@
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "chai": "^4.3.0",
+    "chai-http": "^4.3.0",
     "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.3.0",
+    "should": "^13.2.3"
   }
 }

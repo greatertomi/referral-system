@@ -10,6 +10,8 @@ app.use('/api/v1/auth', require('./routes/auth'));
 // app.use('/api/v1/orders', require('./routes/orders'));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+module.exports = server;
