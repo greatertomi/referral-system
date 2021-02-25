@@ -7,7 +7,7 @@ app.use(express.json({ extended: false }));
 app.use(cors());
 
 app.use('/api/v1/auth', require('./routes/auth'));
-// app.use('/api/v1/orders', require('./routes/orders'));
+app.use('/api/v1/users', require('./routes/users'));
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
