@@ -1,4 +1,4 @@
-# Referral System
+# Amitree Referral System
 
 This is an API that is used to create and manage referrals.
 
@@ -25,3 +25,4 @@ You can clone this project and run it on your PC following these steps
    - PORT
 3. Run the file called db-structure in your MySQl shell or MySQL GUI application to create that database.
 4. Run `npm test` to execute the automated tests. On the test please take note of the instruction written above each test.
+5. Run `npm start` to execute the project
