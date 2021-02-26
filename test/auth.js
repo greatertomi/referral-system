@@ -8,12 +8,14 @@ chai.should();
 
 chai.use(chaiHttp);
 
-describe('AUTH ROUTE', () => {
+// This test the registration of users
+// Please note: For user1 use details that are nurrently in the database
+describe('AUTH ROUTES', () => {
   describe('POST /api/v1/auth/register', () => {
     const user1 = {
-      name: 'Broadland Mob',
-      email: 'broadland1@gmail.com',
-      password: 'broadland1'
+      name: 'Test',
+      email: 'test@gmail.com',
+      password: 'test'
     };
 
     const user2 = {
@@ -32,7 +34,7 @@ describe('AUTH ROUTE', () => {
           res.body.should.have.property('success').eq(true);
           res.body.should.have.property('message');
           res.body.should.have.property('userCredit');
-          res.body.should.have.property('referralCode');
+          res.body.should.have.property('token');
           done();
         });
     });
@@ -42,6 +44,49 @@ describe('AUTH ROUTE', () => {
         .request(server)
         .post('/api/v1/auth/register')
         .send(user2)
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('success').eq(false);
+          res.body.should.have.property('message');
+          done();
+        });
+    });
+  });
+
+  // This test logging a user in
+  // Please note in correctDetail, use a detail in the database
+  describe('POST /api/v1/auth/login', () => {
+    const correctDetail = {
+      email: 'john@gmail.com',
+      password: 'john'
+    };
+
+    const wrongDetail = {
+      email: 'jiga@gmail.com',
+      password: 'huska'
+    };
+
+    it('It should log a user in when the right credentials is received', (done) => {
+      chai
+        .request(server)
+        .post('/api/v1/auth/login')
+        .send(correctDetail)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('success').eq(true);
+          res.body.should.have.property('message');
+          res.body.should.have.property('token');
+          done();
+        });
+    });
+
+    it('It should NOT log a user in when the wrong credentials is received', (done) => {
+      chai
+        .request(server)
+        .post('/api/v1/auth/login')
+        .send(wrongDetail)
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');

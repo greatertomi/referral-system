@@ -16,8 +16,42 @@ const {
 
 const query = util.promisify(db.query).bind(db);
 
-exports.login = (req, res) => {
-  res.send({ message: 'Ready to fire' });
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const [user] = await query('SELECT * FROM users WHERE email = ?', [email]);
+    if (!user) {
+      return res.status(BAD_REQUEST_CODE).send({
+        success: false,
+        message: 'User with this email does not exist.'
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(BAD_REQUEST_CODE).send({
+        success: false,
+        message: 'Wrong password'
+      });
+    }
+
+    const payload = {
+      userId: user.userId
+    };
+    const token = await jwt.sign(payload, keys.jwtSecret, { expiresIn: '5h' });
+    res.send({
+      success: true,
+      message: 'Login successful',
+      token
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(SERVER_ERR_CODE).send({
+      success: false,
+      message: SERVER_ERR_MSG
+    });
+  }
 };
 
 exports.register = async (req, res) => {
@@ -43,21 +77,20 @@ exports.register = async (req, res) => {
   };
 
   try {
-    const existingUser = await query('SELECT * FROM users WHERE email = ?', [
-      email
-    ]);
+    const [user] = await query('SELECT * FROM users WHERE email = ?', [email]);
 
-    if (existingUser.length > 0) {
+    if (user) {
       return res.status(BAD_REQUEST_CODE).send({
         success: false,
         message: 'A user with this email already exist'
       });
     }
 
-    const referralCodes = await query('SELECT userId, referralCode FROM users');
-
     // This executes if the user uses a referral code
     if (regReferralCode) {
+      const referralCodes = await query(
+        'SELECT userId, referralCode FROM users'
+      );
       const regCodeOwner = referralCodes.filter(
         (e) => e.referralCode === String(regReferralCode)
       );
@@ -75,16 +108,13 @@ exports.register = async (req, res) => {
       await updateUserCredit(inviterId);
     }
 
-    // Get all the referral code as an array
-    const referralCodeArray = referralCodes.map((e) => e.referralCode);
-    const userReferralCode = generateReferralCode(referralCodeArray);
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await query(
       `INSERT INTO users (name, password, email, dateTimeJoined, 
-      currentCredit, referralCode) VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, hashPassword, email, currentDateTime, userCredit, userReferralCode]
+      currentCredit) VALUES (?, ?, ?, ?, ?)`,
+      [name, hashedPassword, email, currentDateTime, userCredit]
     );
 
     if (usedReferralCode) {
@@ -94,11 +124,16 @@ exports.register = async (req, res) => {
       );
     }
 
+    const payload = {
+      userId: newUser.insertId
+    };
+    const token = await jwt.sign(payload, keys.jwtSecret, { expiresIn: '5h' });
+
     res.status(201).send({
       success: true,
-      message: 'New user created successfully. You can now login.',
+      message: 'Registration successful. You can now create a referral link.',
       userCredit,
-      referralCode: userReferralCode
+      token
     });
   } catch (err) {
     console.log(err);
