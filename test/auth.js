@@ -9,7 +9,7 @@ chai.should();
 chai.use(chaiHttp);
 
 // This test the registration of users
-// Please note: For user1 use details that are nurrently in the database
+// Please note: For user1, use a detail that is not currently in the database.
 describe('AUTH ROUTES', () => {
   describe('POST /api/v1/auth/register', () => {
     const user1 = {
@@ -56,6 +56,7 @@ describe('AUTH ROUTES', () => {
 
   // This test logging a user in
   // Please note in correctDetail, use a detail in the database
+  // For wrongDetail, use details that is not in the database
   describe('POST /api/v1/auth/login', () => {
     const correctDetail = {
       email: 'john@gmail.com',
