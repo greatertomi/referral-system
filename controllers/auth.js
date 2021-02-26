@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const util = require('util');
+const { validationResult } = require('express-validator');
 
 const keys = require('../config/keys');
 const db = require('../database');
@@ -9,14 +10,17 @@ const {
   SERVER_ERR_CODE,
   BAD_REQUEST_CODE
 } = require('../utils/constants');
-const {
-  getCurrentDateTime,
-  generateReferralCode
-} = require('../utils/helper-functions');
+const { getCurrentDateTime } = require('../utils/helper-functions');
 
 const query = util.promisify(db.query).bind(db);
 
 exports.login = async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { email, password } = req.body;
 
   try {
@@ -55,6 +59,12 @@ exports.login = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { name, password, email, regReferralCode } = req.body;
   const currentDateTime = getCurrentDateTime();
   let userCredit = 0;
