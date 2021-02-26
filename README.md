@@ -2,7 +2,9 @@
 
 This is an API that is used to create and manage referrals.
 
-The url is [https://amitreereferral.herokuapp.com/api/v1/](https://amitreereferral.herokuapp.com/api/v1/).
+The url is [https://amitreereferral.herokuapp.com/api/v1/](https://amitreereferral.herokuapp.com/api/v1/). 
+
+Note: **You can only use this endpoint from an api testing too like Postman etc.**
 
 You can read its documentation [here](https://documenter.getpostman.com/view/8710999/TWDcFuyL)
 
