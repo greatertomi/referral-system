@@ -34,12 +34,10 @@ exports.register = async (req, res) => {
       [userId]
     );
     const totalInvites = inviterRecords.length;
-    console.log('totalInvites', totalInvites);
     if ((totalInvites + 1) % 5 === 0) {
-      console.log('Incrementing current credit...');
       await query(
         'UPDATE users SET currentCredit = currentCredit + ? WHERE userId = ?',
-        [5, userId]
+        [10, userId]
       );
     }
   };
@@ -79,7 +77,6 @@ exports.register = async (req, res) => {
 
     // Get all the referral code as an array
     const referralCodeArray = referralCodes.map((e) => e.referralCode);
-    console.log('referralCodeArray', referralCodeArray);
     const userReferralCode = generateReferralCode(referralCodeArray);
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
@@ -101,7 +98,7 @@ exports.register = async (req, res) => {
       success: true,
       message: 'New user created successfully. You can now login.',
       userCredit,
-      referralCode: usedReferralCode
+      referralCode: userReferralCode
     });
   } catch (err) {
     console.log(err);
