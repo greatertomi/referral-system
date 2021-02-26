@@ -67,6 +67,7 @@ exports.getOneUser = async (req, res) => {
 
 exports.createReferralCode = async (req, res) => {
   const { userId } = req.user;
+  console.log(req.body);
   try {
     const [user] = await query('SELECT * FROM users WHERE userId = ?', [
       userId
@@ -97,7 +98,7 @@ exports.createReferralCode = async (req, res) => {
     ]);
 
     res.send({
-      success: false,
+      success: true,
       message: 'Referral code created successfully',
       referralCode
     });
