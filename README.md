@@ -17,7 +17,7 @@ You can read its documentation [here](https://documenter.getpostman.com/view/871
 You can clone this project and run it on your PC following these steps
 
 1. Run `npm install`
-2. Create a .env file and specify the following details about your database
+2. Create a .env file and specify the following details about your database and the app
    - HOST
    - USER
    - PASSWORD
